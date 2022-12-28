@@ -1,24 +1,73 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import "./App.css";
+import questions from "./questions";
+import Result from "./components/Result";
+import QuestionBox from "./components/QuestionBox";
+
+
 
 function App() {
+
+  const [showResults, setShowResults] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [theme, setTheme] = useState(true)
+  const [themeName, setThemeName] = useState("dark")
+
+
+  const optionClicked = (isCorrect) => {
+
+    if (isCorrect) {
+      setScore(score + 1);
+    }
+
+    if (currentQuestion + 1 < questions.length) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      setShowResults(true);
+    }
+  };
+
+
+  const handleToggle = ()=>{
+    setTheme(theme?false:true);
+  }
+
+  function backGroundColors(color){
+
+    document.body.style.backgroundColor = color? "#6e6a6a":"white";
+    return{
+      backgroundColor : color? "#6e6a6a":"white",
+    }
+  }
+
+  function textColor(color){
+    return{
+      color:color?"white":"#6e6a6a",
+    }
+  }
+
+  useEffect(()=>{
+    setThemeName(themeName==="light"?"dark":"light")
+  },[theme])
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="App" style={backGroundColors(theme)}>
+        <div className="flex">
+          <h2 style={textColor(theme)}>Kalvium</h2>
+          <button className="toggle-button" onClick={handleToggle}>{themeName}</button>
+        </div>
+      
+        {
+          showResults ? <Result setScore={setScore} score={score} setCurrentQuestion={setCurrentQuestion} setShowResults={setShowResults} length={questions.length}/> : 
+          <QuestionBox questions={questions} optionClicked={optionClicked} currentQuestion={currentQuestion}/>
+        }
+
+      
+      
+      </div>
+
   );
 }
 
